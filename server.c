@@ -83,8 +83,21 @@ int loop(int server_fd) {
             if (CLIENTS[i] == NULL) {
                 continue;
             }
-            
+            if (!read_message(buff, sizeof(buff), i)) {
+                continue;
+            }
+            printf("Message from client %i successfully received: %s", i, buff);
+            redistribute_message(i, buff);
         }
+
+        add_client(server_fd);
+        if (fgets(buff, sizeof(buff), stdin) == NULL) {
+            if (feof(æstdin)) {
+                return 0;
+            }
+        }
+
+        usleep(100 * 1000);           // wait 100 ms before checking again
     }
 }
 
