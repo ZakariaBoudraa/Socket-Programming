@@ -9,6 +9,10 @@
 const int MAX_CLIENTS = 4;
 FILE *CLIENTS[MAX_CLIENTS] = {0};
 
+int loop(int server_fd) {
+    
+}
+
 int main(int argc, char *argv[]) {
     struct sockaddr_in address;
     int server_fd;
@@ -42,14 +46,14 @@ int main(int argc, char *argv[]) {
     }
 
     fcntl(stdin, F_SETFLG, O_NONBLOCKING);
-    int status = main_loop(server_fd);
+    int status = loop(server_fd);
 
     for (int i = 0; i < MAX_CLIENTS; i++) {
         if (NULL != CLIENTS[i]) {
             fclose(CLIENTS[i]);
         }
     }
-        
+
     close(server_fd);
     return status;
 }
