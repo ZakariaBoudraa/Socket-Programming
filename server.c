@@ -40,8 +40,8 @@ int read_message(char *buf, size_t len, int client_index) {
 
 void add_client(int server_fd) {
 
-    int client_fd = accept(server_fd, NULL, NULL)
-    if ((client_fd = accept(server_fd, NULL, NULL)) == -1) {
+    int client_fd = accept(server_fd, NULL, NULL);
+    if (client_fd == -1) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
             return;
         } else {
