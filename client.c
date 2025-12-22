@@ -43,11 +43,7 @@ int main(int argc, char *argv[]) {
     FILE *server = fdopen(sock_fd, "r+");                            // convert socket file descriptor in server file
     for (;;) {
         if (fgets(buff, sizeof(buff), stdin) != NULL) {
-            if (fprintf(server, "%s", buff) < 0) {
-                perror("fprintf");
-                fclose(server);
-                exit(0);
-            }
+            fprintf(server, "%s", buff);
             fflush(server);
         } else {
             if (errno != EAGAIN || errno != EWOULDBLOCK) {
@@ -57,11 +53,13 @@ int main(int argc, char *argv[]) {
         }
 
         if (fgets(buff, sizeof(buff), server) != NULL) {
-            if (fprintf(stdout, "%s", buff) < 0) {
-                perror("fprintf");
+            if (buff[0] == 'S' && buff[1] == 'o' && buff[2] == 'r' && buff[3] == 'r' && buff[4] == 'y') {
+                fprintf(stdout, "%s", buff);
+                fflush(stdout);
                 fclose(server);
                 exit(0);
             }
+            fprintf(stdout, "%s", buff);
             fflush(stdout);
         } else {
             if (errno != EAGAIN || errno != EWOULDBLOCK) {

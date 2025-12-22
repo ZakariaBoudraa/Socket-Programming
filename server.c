@@ -10,35 +10,37 @@ const int MAX_CLIENTS = 4;
 FILE *CLIENTS[MAX_CLIENTS] = {0};
 
 void redistribute_message(int sender_index, char *buff) {
+
    for (int i = 0; i < MAX_CLIENTS; i ++) {
         if (CLIENTS[i] == NULL || i == sender_index) {
             continue;
-        } else {
-            if (0 > fprintf(CLIENTS[i], "%s", buf)) {
-                fclose(CLIENTS[i]);
-                CLIENTS[i] = NULL;
-            } else if (EOF == fflush(CLIENTS[i])) {
-                fclose(CLIENTS[i]);
-                CLIENTS[i] = NULL;
-            }
+        }
+
+        if (fprintf(CLIENTS[i], "%s", buff) < 0 || fflush(CLIENTS[i]) == EOF) {
+            fclose(CLIENTS[i]);
+            CLIENTS[i] = NULL;
         }
    }
 }
 
 int read_message(char *buf, size_t len, int client_index) {
+
+    errno = 0;
     if (fgets(buf, (int)len, CLIENTS[client_index]) == NULL) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) {
-            return -1;
+        if (errno == EAGAIN || errno == EWOULDBLOCK || errno == 0) {
+            return 0;
         } else {
             fclose(CLIENTS[client_index]);
             CLIENTS[client_index] == NULL;
-            return -1;
+            return 0;
         }
     }
     return 1;
 }
 
 void add_client(int server_fd) {
+
+    int client_fd = accept(server_fd, NULL, NULL)
     if ((client_fd = accept(server_fd, NULL, NULL)) == -1) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
             return;
